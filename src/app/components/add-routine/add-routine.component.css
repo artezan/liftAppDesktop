@@ -25,3 +25,14 @@
 .col:last-child {
   margin-right: 0;
 }
+
+.flex-data-ex {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.float-button {
+  position: fixed;
+  bottom: 2px;
+  right: 3%;
+}

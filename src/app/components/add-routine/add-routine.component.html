@@ -1,100 +1,157 @@
-<form [formGroup]="addressForm" novalidate (ngSubmit)="onSubmit()">
-  <mat-card class="shipping-card">
-    <mat-card-header>
-      <mat-card-title>Shipping Information</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="Company" formControlName="company">
-          </mat-form-field>
-        </div>
+<div>
+  <form #routineForm="ngForm">
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre usuario</mat-label>
+          <mat-select placeholder="Día"
+            [(ngModel)]="currentDay"
+            id="cDay"
+            name="cDay"
+            #cDay="ngModel">
+            <ng-container *ngIf="users">
+              <mat-option *ngFor="let user of users"
+                [value]="user.id">{{user.name}} {{user.lastName}}</mat-option>
+            </ng-container>
+
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre usuario</mat-label>
+
+          <input matInput
+            [(ngModel)]="routineModel.uid"
+            id="uid"
+            name="uid"
+            #uid="ngModel"
+            placeholder="Nombre usuario" />
+        </mat-form-field>
       </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="First name" formControlName="firstName">
-            <mat-error *ngIf="addressForm.controls['firstName'].hasError('required')">
-              First name is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="Last name" formControlName="lastName">
-            <mat-error *ngIf="addressForm.controls['lastName'].hasError('required')">
-              Last name is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Numero rutina</mat-label>
+
+          <input matInput
+            [(ngModel)]="routineModel.number"
+            id="num"
+            name="num"
+            #numR="ngModel"
+            placeholder="Numero rutina"
+            type="number" />
+        </mat-form-field>
       </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <textarea matInput placeholder="Address" formControlName="address"></textarea>
-            <mat-error *ngIf="addressForm.controls['address'].hasError('required')">
-              Address is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Fecha Fin</mat-label>
+          <input matInput
+            [(ngModel)]="routineModel.endDate"
+            [matDatepicker]="picker"
+            #pickerM="ngModel"
+            id="pickerM"
+            name="pickerM"
+            placeholder="Fecha Fin" />
+          <mat-datepicker-toggle matSuffix
+            [for]="picker">
+            <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
       </div>
-      <div class="row" *ngIf="!hasUnitNumber">
-        <div class="col">
-          <button mat-button type="button" (click)="hasUnitNumber = !hasUnitNumber">
-            + Add C/O, Apt, Suite, Unit
-          </button>
-        </div>
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Dia</mat-label>
+          <mat-select placeholder="Día"
+            [(ngModel)]="currentDay"
+            id="cDay"
+            name="cDay"
+            #cDay="ngModel">
+            <mat-option *ngFor="let day of daysArr"
+              [value]="day.id">{{day.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
-      <div class="row" *ngIf="hasUnitNumber">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <textarea matInput placeholder="Address 2" formControlName="address2"></textarea>
-          </mat-form-field>
-        </div>
+
+    </div>
+    <mat-card *ngFor="let block of blocks; let i=index"
+      class="shipping-card">
+      <mat-card-header>
+        <mat-card-title>Bloque {{i + 1}} </mat-card-title>
+      </mat-card-header>
+      <div class="flex-data-ex">
+        <mat-form-field>
+
+          <mat-select [(ngModel)]="block.typeMuscle"
+            id="typeMuscleEx"
+            name="typeMuscleEx"
+            #typeMuscle="ngModel"
+            placeholder="Musculo">
+            <mat-option value="femoral">Femoral</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="City" formControlName="city">
-            <mat-error *ngIf="addressForm.controls['city'].hasError('required')">
-              City is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col">
-          <mat-form-field class="full-width">
-            <mat-select placeholder="State" formControlName="state">
-              <mat-option *ngFor="let state of states" [value]="state.abbreviation">
-                {{ state.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="addressForm.controls['state'].hasError('required')">
-              State is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput #postalCode maxlength="5" placeholder="Postal Code" type="number" formControlName="postalCode">
-            <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint>
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-radio-group formControlName="shipping">
-            <mat-radio-button value="free">Free Shipping</mat-radio-button>
-            <mat-radio-button value="priority">Priority Shipping</mat-radio-button>
-            <mat-radio-button value="nextday">Next Day Shipping</mat-radio-button>
-          </mat-radio-group>
-        </div>
-      </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" type="submit">Submit</button>
-    </mat-card-actions>
-  </mat-card>
-</form>
+      <mat-card-content>
+        <ng-container *ngFor="let numEx of numOfEx">
+          <mat-card-subtitle>
+            Exercicio {{numEx}}
+          </mat-card-subtitle>
+          <div class="row">
+            <div class="col">
+              <mat-form-field appearance="outline"
+                class="full-width">
+                <mat-label>Nombre Exercicio</mat-label>
+                <input matInput
+                  [(ngModel)]="block.exercises[numEx -1].name"
+                  id="nameEx"
+                  name="nameEx"
+                  #nameEx="ngModel"
+                  placeholder="Nombre Exercicio" />
+              </mat-form-field>
+            </div>
+            <div class="col">
+              <mat-form-field appearance="outline"
+                class="full-width">
+                <mat-label>Numnero de Reps</mat-label>
+
+                <input matInput
+                  [(ngModel)]="block.exercises[numEx -1].reps"
+                  id="repsEx"
+                  name="repsEx"
+                  type="number"
+                  #nameEx="ngModel"
+                  placeholder="Numnero de Reps" />
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <mat-form-field appearance="outline"
+                class="full-width">
+                <mat-label>Descripcion</mat-label>
+                <textarea matInput
+                  [(ngModel)]="block.exercises[numEx -1].description"
+                  id="descriptionEx"
+                  name="descriptionEx"
+                  #nameEx="ngModel"
+                  placeholder="Descripcion"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </ng-container>
+
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button
+          color="primary"
+          (click)="onSubmit(i)">Guardar</button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+  <div>
+    <button mat-fab
+      (click)="addBlock()"
+      class="float-button "
+      color="primary">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>

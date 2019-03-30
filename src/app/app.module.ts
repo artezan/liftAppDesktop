@@ -6,16 +6,24 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MenuComponent } from './components/shared/menu/menu.component';
 import { LayoutModule } from '@angular/cdk/layout';
-import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule, MatInputModule, MatSelectModule, MatRadioModule, MatCardModule } from '@angular/material';
+import {
+  MatToolbarModule,
+  MatButtonModule,
+  MatSidenavModule,
+  MatIconModule,
+  MatListModule,
+  MatInputModule,
+  MatSelectModule,
+  MatRadioModule,
+  MatCardModule,
+  MatDatepickerModule,
+  MatNativeDateModule
+} from '@angular/material';
 import { AddRoutineComponent } from './components/add-routine/add-routine.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MenuComponent,
-    AddRoutineComponent
-  ],
+  declarations: [AppComponent, MenuComponent, AddRoutineComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -30,9 +38,15 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatSelectModule,
     MatRadioModule,
     MatCardModule,
-    ReactiveFormsModule
+    MatDatepickerModule,
+    MatNativeDateModule ,
+    ReactiveFormsModule,
+    FormsModule
+
   ],
-  providers: [],
+  providers: [
+    MatDatepickerModule
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

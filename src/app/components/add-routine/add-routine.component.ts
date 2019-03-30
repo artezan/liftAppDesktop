@@ -1,93 +1,111 @@
-import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
+import { IRoutine } from 'src/app/models/routine.model';
+import { IBlock } from 'src/app/models/block.model';
+import { FbService } from 'src/app/service/fb.service';
 
 @Component({
   selector: 'app-add-routine',
   templateUrl: './add-routine.component.html',
   styleUrls: ['./add-routine.component.css']
 })
-export class AddRoutineComponent {
-  addressForm = this.fb.group({
-    company: null,
-    firstName: [null, Validators.required],
-    lastName: [null, Validators.required],
-    address: [null, Validators.required],
-    address2: null,
-    city: [null, Validators.required],
-    state: [null, Validators.required],
-    postalCode: [null, Validators.compose([
-      Validators.required, Validators.minLength(5), Validators.maxLength(5)])
-    ],
-    shipping: ['free', Validators.required]
-  });
-
-  hasUnitNumber = false;
-
-  states = [
-    {name: 'Alabama', abbreviation: 'AL'},
-    {name: 'Alaska', abbreviation: 'AK'},
-    {name: 'American Samoa', abbreviation: 'AS'},
-    {name: 'Arizona', abbreviation: 'AZ'},
-    {name: 'Arkansas', abbreviation: 'AR'},
-    {name: 'California', abbreviation: 'CA'},
-    {name: 'Colorado', abbreviation: 'CO'},
-    {name: 'Connecticut', abbreviation: 'CT'},
-    {name: 'Delaware', abbreviation: 'DE'},
-    {name: 'District Of Columbia', abbreviation: 'DC'},
-    {name: 'Federated States Of Micronesia', abbreviation: 'FM'},
-    {name: 'Florida', abbreviation: 'FL'},
-    {name: 'Georgia', abbreviation: 'GA'},
-    {name: 'Guam', abbreviation: 'GU'},
-    {name: 'Hawaii', abbreviation: 'HI'},
-    {name: 'Idaho', abbreviation: 'ID'},
-    {name: 'Illinois', abbreviation: 'IL'},
-    {name: 'Indiana', abbreviation: 'IN'},
-    {name: 'Iowa', abbreviation: 'IA'},
-    {name: 'Kansas', abbreviation: 'KS'},
-    {name: 'Kentucky', abbreviation: 'KY'},
-    {name: 'Louisiana', abbreviation: 'LA'},
-    {name: 'Maine', abbreviation: 'ME'},
-    {name: 'Marshall Islands', abbreviation: 'MH'},
-    {name: 'Maryland', abbreviation: 'MD'},
-    {name: 'Massachusetts', abbreviation: 'MA'},
-    {name: 'Michigan', abbreviation: 'MI'},
-    {name: 'Minnesota', abbreviation: 'MN'},
-    {name: 'Mississippi', abbreviation: 'MS'},
-    {name: 'Missouri', abbreviation: 'MO'},
-    {name: 'Montana', abbreviation: 'MT'},
-    {name: 'Nebraska', abbreviation: 'NE'},
-    {name: 'Nevada', abbreviation: 'NV'},
-    {name: 'New Hampshire', abbreviation: 'NH'},
-    {name: 'New Jersey', abbreviation: 'NJ'},
-    {name: 'New Mexico', abbreviation: 'NM'},
-    {name: 'New York', abbreviation: 'NY'},
-    {name: 'North Carolina', abbreviation: 'NC'},
-    {name: 'North Dakota', abbreviation: 'ND'},
-    {name: 'Northern Mariana Islands', abbreviation: 'MP'},
-    {name: 'Ohio', abbreviation: 'OH'},
-    {name: 'Oklahoma', abbreviation: 'OK'},
-    {name: 'Oregon', abbreviation: 'OR'},
-    {name: 'Palau', abbreviation: 'PW'},
-    {name: 'Pennsylvania', abbreviation: 'PA'},
-    {name: 'Puerto Rico', abbreviation: 'PR'},
-    {name: 'Rhode Island', abbreviation: 'RI'},
-    {name: 'South Carolina', abbreviation: 'SC'},
-    {name: 'South Dakota', abbreviation: 'SD'},
-    {name: 'Tennessee', abbreviation: 'TN'},
-    {name: 'Texas', abbreviation: 'TX'},
-    {name: 'Utah', abbreviation: 'UT'},
-    {name: 'Vermont', abbreviation: 'VT'},
-    {name: 'Virgin Islands', abbreviation: 'VI'},
-    {name: 'Virginia', abbreviation: 'VA'},
-    {name: 'Washington', abbreviation: 'WA'},
-    {name: 'West Virginia', abbreviation: 'WV'},
-    {name: 'Wisconsin', abbreviation: 'WI'},
-    {name: 'Wyoming', abbreviation: 'WY'}
+export class AddRoutineComponent implements OnInit {
+  users = [];
+  currentDay = 1;
+  routineModel: IRoutine = {};
+  numOfEx = [1, 2, 3];
+  daysArr = [
+    {
+      name: 'Lunes',
+      id: 1
+    },
+    {
+      name: 'Martes',
+      id: 2
+    },
+    {
+      name: 'Miercoles',
+      id: 3
+    },
+    {
+      name: 'Jueves',
+      id: 4
+    },
+    {
+      name: 'Viernes',
+      id: 5
+    },
+    {
+      name: 'Sabado',
+      id: 6
+    }
+  ];
+  blocks: IBlock[] = [
+    {
+      day: 0,
+      exercises: [
+        {
+          name: '',
+          description: '',
+          reps: 0
+        },
+        {
+          name: '',
+          description: '',
+          reps: 0
+        },
+        {
+          name: '',
+          description: '',
+          reps: 0
+        }
+      ]
+    }
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fbService: FbService) {}
 
-  onSubmit() {
-    alert('Thanks!');
+  ngOnInit() {
+    this.getUser();
+  }
+
+  async getUser() {
+    this.users = await this.fbService.getAllUser();
+    console.log(this.users);
+  }
+
+  addExNumber() {
+    this.numOfEx.push(this.numOfEx.length + 1);
+  }
+  onSubmit(i: number) {
+    // Buscar bloque numero y uid
+    this.fbService.getByNumAndUid(
+      this.routineModel.number,
+      this.routineModel.uid
+    );
+    // si existe edita
+    // no existe crea y genera el bloque
+  }
+  addBlock() {
+    this.blocks.push({
+      day: this.currentDay,
+      exercises: [
+        {
+          name: '',
+          description: '',
+          reps: null
+        },
+        {
+          name: '',
+          description: '',
+          reps: null
+        },
+        {
+          name: '',
+          description: '',
+          reps: null
+        }
+      ]
+    });
   }
 }
