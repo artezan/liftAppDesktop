@@ -197,8 +197,8 @@
                     <textarea
                       matInput
                       [(ngModel)]="block.exercises[numEx].description"
-                      id="descriptionEx"
-                      name="descriptionEx"
+                      id="descriptionEx{{ numEx }}-block-{{ i }}"
+                      name="descriptionEx{{ numEx }}-block-{{ i }}"
                       #descriptionEx="ngModel"
                       placeholder="Descripcion"
                     ></textarea>
