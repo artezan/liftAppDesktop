@@ -3,6 +3,7 @@ import { FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import { IRoutine } from 'src/app/models/routine.model';
 import { IBlock } from 'src/app/models/block.model';
 import { FbService } from 'src/app/service/fb.service';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-add-routine',
@@ -11,33 +12,33 @@ import { FbService } from 'src/app/service/fb.service';
 })
 export class AddRoutineComponent implements OnInit {
   users = [];
-  currentDay = 1;
+  currentDay = 0;
   routineModel: IRoutine = {};
-  numOfEx = [1, 2, 3];
+  dateToShow: Date;
   daysArr = [
     {
       name: 'Lunes',
-      id: 1
+      id: 0
     },
     {
       name: 'Martes',
-      id: 2
+      id: 1
     },
     {
       name: 'Miercoles',
-      id: 3
+      id: 2
     },
     {
       name: 'Jueves',
-      id: 4
+      id: 3
     },
     {
       name: 'Viernes',
-      id: 5
+      id: 4
     },
     {
       name: 'Sabado',
-      id: 6
+      id: 5
     }
   ];
   blocks: IBlock[] = [
@@ -47,23 +48,13 @@ export class AddRoutineComponent implements OnInit {
         {
           name: '',
           description: '',
-          reps: 0
-        },
-        {
-          name: '',
-          description: '',
-          reps: 0
-        },
-        {
-          name: '',
-          description: '',
-          reps: 0
+          reps: null
         }
       ]
     }
   ];
 
-  constructor(private fbService: FbService) {}
+  constructor(private fbService: FbService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.getUser();
@@ -74,38 +65,111 @@ export class AddRoutineComponent implements OnInit {
     console.log(this.users);
   }
 
-  addExNumber() {
-    this.numOfEx.push(this.numOfEx.length + 1);
+  addExNumber(i: number) {
+    this.blocks[i].exercises.push({
+      description: '',
+      name: '',
+      reps: null
+    });
   }
-  onSubmit(i: number) {
-    // Buscar bloque numero y uid
-    this.fbService.getByNumAndUid(
-      this.routineModel.number,
-      this.routineModel.uid
-    );
-    // si existe edita
-    // no existe crea y genera el bloque
+  removeBlock(i: number) {
+    this.blocks.splice(i, 1);
+    this.blocks = this.blocks.map((b, index) => {
+      b.number = index;
+      return b;
+    });
+  }
+  removeEx(indexBlock: number, indexEx: number) {
+    this.blocks[indexBlock].exercises.splice(indexEx, 1);
+  }
+  onSubmit() {
+    this.blocks = this.blocks.filter(b => {
+      b.exercises = b.exercises.filter(e => e.reps != null && e.reps !== 0);
+      if (b.exercises.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    this.routineModel.blocks = this.blocks;
+    this.routineModel.startDate = new Date().getTime();
+    console.log(this.routineModel);
+    if (this.routineModel.id) {
+      this.fbService.editDoc(this.routineModel).then(res => {
+        this.openSnackBar(`Bloque editado 🎉 `);
+      });
+    } else {
+      this.fbService.saveDoc(this.routineModel).then(res => {
+        this.openSnackBar(`Bloque guardado 🤘`);
+      });
+    }
   }
   addBlock() {
     this.blocks.push({
       day: this.currentDay,
+      number: this.getNumOfBloqPerDay(this.currentDay),
       exercises: [
-        {
-          name: '',
-          description: '',
-          reps: null
-        },
-        {
-          name: '',
-          description: '',
-          reps: null
-        },
         {
           name: '',
           description: '',
           reps: null
         }
       ]
+    });
+  }
+  async handleUserSelect(value: string) {
+    const arrRes = await this.fbService.getByUid(value);
+    if (arrRes && arrRes.length === 0) {
+      // reset values
+      this.dateToShow = undefined;
+      this.routineModel = { uid: value };
+      this.blocks = [
+        {
+          day: 0,
+          exercises: [
+            {
+              name: '',
+              description: '',
+              reps: null
+            }
+          ]
+        }
+      ];
+    } else {
+      this.routineModel = arrRes[0];
+      this.blocks = this.routineModel.blocks;
+      this.dateToShow = new Date(this.routineModel.endDate);
+    }
+  }
+  handleDaySelect(value: number) {
+    if (this.getNumOfBloqPerDay(value) === 0) {
+      this.blocks.push({
+        day: value,
+        number: this.getNumOfBloqPerDay(value),
+        exercises: [
+          {
+            name: '',
+            description: '',
+            reps: null
+          }
+        ]
+      });
+    }
+  }
+  handleDateEnd(value: any) {
+    const time = new Date(value).getTime();
+    console.log(time);
+    this.routineModel.endDate = time;
+  }
+  //  _helpers
+  getNumOfBloqPerDay(day: number): number {
+    return this.blocks.filter(b => b.day === day).length
+      ? this.blocks.filter(b => b.day === day).length
+      : 0;
+  }
+  private openSnackBar(message: string) {
+    this.snackBar.open(message, '', {
+      duration: 4000
     });
   }
 }

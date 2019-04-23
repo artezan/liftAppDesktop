@@ -1,157 +1,242 @@
-<div>
-  <form #routineForm="ngForm">
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="fill">
+<div class="contenet">
+  <div class="row">
+    <div class="col1">
+      <mat-form-field color="accent" appearance="fill">
+        <mat-label>Nombre usuario</mat-label>
+        <mat-select
+          (valueChange)="handleUserSelect($event)"
+          [(ngModel)]="routineModel.uid"
+          id="uid"
+          name="uid"
+          #uid="ngModel"
+          placeholder="Nombre usuario"
+        >
+          <ng-container *ngIf="users">
+            <mat-option *ngFor="let user of users" [value]="user.id"
+              >{{ user.name }} {{ user.lastName }}</mat-option
+            >
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+      <!--  <mat-form-field color="accent" appearance="fill">
           <mat-label>Nombre usuario</mat-label>
-          <mat-select placeholder="Día"
-            [(ngModel)]="currentDay"
-            id="cDay"
-            name="cDay"
-            #cDay="ngModel">
-            <ng-container *ngIf="users">
-              <mat-option *ngFor="let user of users"
-                [value]="user.id">{{user.name}} {{user.lastName}}</mat-option>
-            </ng-container>
 
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Nombre usuario</mat-label>
-
-          <input matInput
+          <input
+            matInput
             [(ngModel)]="routineModel.uid"
             id="uid"
             name="uid"
             #uid="ngModel"
-            placeholder="Nombre usuario" />
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Numero rutina</mat-label>
-
-          <input matInput
-            [(ngModel)]="routineModel.number"
-            id="num"
-            name="num"
-            #numR="ngModel"
-            placeholder="Numero rutina"
-            type="number" />
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Fecha Fin</mat-label>
-          <input matInput
-            [(ngModel)]="routineModel.endDate"
-            [matDatepicker]="picker"
-            #pickerM="ngModel"
-            id="pickerM"
-            name="pickerM"
-            placeholder="Fecha Fin" />
-          <mat-datepicker-toggle matSuffix
-            [for]="picker">
-            <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
-          </mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Dia</mat-label>
-          <mat-select placeholder="Día"
-            [(ngModel)]="currentDay"
-            id="cDay"
-            name="cDay"
-            #cDay="ngModel">
-            <mat-option *ngFor="let day of daysArr"
-              [value]="day.id">{{day.name}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
+            placeholder="Nombre usuario"
+          />
+        </mat-form-field> -->
     </div>
-    <mat-card *ngFor="let block of blocks; let i=index"
-      class="shipping-card">
-      <mat-card-header>
-        <mat-card-title>Bloque {{i + 1}} </mat-card-title>
-      </mat-card-header>
-      <div class="flex-data-ex">
-        <mat-form-field>
+    <div class="col1">
+      <mat-form-field color="accent" appearance="fill">
+        <mat-label>Fecha Recordatorio</mat-label>
+        <input
+          matInput
+          (dateChange)="handleDateEnd($event.value)"
+          [matDatepicker]="picker"
+          #pickerM
+          id="pickerM"
+          name="pickerM"
+          placeholder="Fecha Fin"
+          [value]="dateToShow"
+          readonly
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker">
+          <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+        </mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="col1">
+      <mat-form-field color="accent" appearance="fill">
+        <mat-label>Dia</mat-label>
+        <mat-select
+          (valueChange)="handleDaySelect($event)"
+          placeholder="Día"
+          [(ngModel)]="currentDay"
+          id="cDay"
+          name="cDay"
+          #cDay="ngModel"
+        >
+          <mat-option *ngFor="let day of daysArr" [value]="day.id">{{
+            day.name
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <ng-container *ngFor="let block of blocks; let i = index">
+    <mat-card *ngIf="block.day == currentDay" class="shipping-card">
+      <!-- bloques -->
 
-          <mat-select [(ngModel)]="block.typeMuscle"
-            id="typeMuscleEx"
-            name="typeMuscleEx"
-            #typeMuscle="ngModel"
-            placeholder="Musculo">
-            <mat-option value="femoral">Femoral</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <mat-card-content>
-        <ng-container *ngFor="let numEx of numOfEx">
-          <mat-card-subtitle>
-            Exercicio {{numEx}}
-          </mat-card-subtitle>
-          <div class="row">
-            <div class="col">
-              <mat-form-field appearance="outline"
-                class="full-width">
-                <mat-label>Nombre Exercicio</mat-label>
-                <input matInput
-                  [(ngModel)]="block.exercises[numEx -1].name"
-                  id="nameEx"
-                  name="nameEx"
-                  #nameEx="ngModel"
-                  placeholder="Nombre Exercicio" />
-              </mat-form-field>
-            </div>
-            <div class="col">
-              <mat-form-field appearance="outline"
-                class="full-width">
-                <mat-label>Numnero de Reps</mat-label>
+      <form #routineForm="ngForm">
+        <mat-card-header>
+          <mat-card-title
+            >Bloque {{ block.number ? block.number + 1 : 1 }}
+          </mat-card-title>
+          <button
+            *ngIf="getNumOfBloqPerDay(currentDay) !== 1"
+            mat-icon-button
+            style="margin-left: auto;"
+            (click)="removeBlock(i)"
+          >
+            <mat-icon color="warn" class="mat-18">delete</mat-icon>
+          </button>
+        </mat-card-header>
+        <div class="flex-data-ex">
+          <mat-form-field color="accent">
+            <mat-select
+              [(ngModel)]="block.typeMuscle"
+              id="typeMuscleEx"
+              name="typeMuscleEx"
+              #typeMuscle="ngModel"
+              placeholder="Musculo"
+              required
+            >
+              <mat-option value="femoral">Femoral</mat-option>
+              <mat-option value="biceps">Biceps</mat-option>
+              <mat-option value="triceps">Triceps</mat-option>
+              <mat-option value="hombro">Hombro</mat-option>
+              <mat-option value="pecho">Pecho</mat-option>
+              <mat-option value="cuadriceps">Cuadriceps</mat-option>
+              <mat-option value="espalda">Espalda</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-                <input matInput
-                  [(ngModel)]="block.exercises[numEx -1].reps"
-                  id="repsEx"
-                  name="repsEx"
-                  type="number"
-                  #nameEx="ngModel"
-                  placeholder="Numnero de Reps" />
-              </mat-form-field>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <mat-form-field appearance="outline"
-                class="full-width">
-                <mat-label>Descripcion</mat-label>
-                <textarea matInput
-                  [(ngModel)]="block.exercises[numEx -1].description"
-                  id="descriptionEx"
-                  name="descriptionEx"
-                  #nameEx="ngModel"
-                  placeholder="Descripcion"></textarea>
-              </mat-form-field>
-            </div>
-          </div>
-        </ng-container>
+          <mat-form-field color="accent">
+            <mat-label>Numero de series</mat-label>
 
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button
-          color="primary"
-          (click)="onSubmit(i)">Guardar</button>
-      </mat-card-actions>
+            <input
+              matInput
+              [(ngModel)]="block.series"
+              id="series"
+              name="series"
+              type="number"
+              #series="ngModel"
+              placeholder="Numnero de series"
+              required
+            />
+          </mat-form-field>
+        </div>
+        <mat-card-content>
+          <ng-container
+            *ngFor="let exercise of block.exercises; let numEx = index"
+          >
+            <!-- Empieza ejercicios -->
+            <div class="box-border">
+              <div class="flex-remove">
+                <mat-card-subtitle style="margin-right: auto;">
+                  Exercicio {{ numEx + 1 }}
+                </mat-card-subtitle>
+                <button
+                  *ngIf="block.exercises.length !== 1"
+                  mat-stroked-button
+                  (click)="removeEx(i, numEx)"
+                  color="warn"
+                >
+                  <div style="display: flex; align-items: center">
+                    <mat-icon>delete</mat-icon>
+                    <div>Exercicio</div>
+                  </div>
+                </button>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <mat-form-field
+                    color="accent"
+                    appearance="outline"
+                    class="full-width"
+                    color="accent"
+                  >
+                    <mat-label>Nombre Exercicio</mat-label>
+                    <input
+                      matInput
+                      [(ngModel)]="block.exercises[numEx].name"
+                      id="nameEx{{ numEx }}-block-{{ i }}"
+                      name="nameEx{{ numEx }}-block-{{ i }}"
+                      #nameEx="ngModel"
+                      placeholder="Nombre Exercicio"
+                      required
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="col">
+                  <mat-form-field
+                    color="accent"
+                    appearance="outline"
+                    class="full-width"
+                  >
+                    <mat-label>Numnero de Reps</mat-label>
+
+                    <input
+                      matInput
+                      [(ngModel)]="block.exercises[numEx].reps"
+                      id="repsEx{{ numEx }}-block-{{ i }}"
+                      name="repsEx{{ numEx }}-block-{{ i }}"
+                      type="number"
+                      #repsEx="ngModel"
+                      placeholder="Numnero de Reps"
+                      required
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <mat-form-field
+                    color="accent"
+                    appearance="outline"
+                    class="full-width"
+                  >
+                    <mat-label>Descripcion</mat-label>
+                    <textarea
+                      matInput
+                      [(ngModel)]="block.exercises[numEx].description"
+                      id="descriptionEx"
+                      name="descriptionEx"
+                      #descriptionEx="ngModel"
+                      placeholder="Descripcion"
+                    ></textarea>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </mat-card-content>
+        <mat-card-actions>
+          <button
+            mat-raised-button
+            color="accent"
+            [disabled]="!routineForm.form.valid || !routineModel.uid"
+            (click)="onSubmit()"
+          >
+            Guardar Bloque 💾
+          </button>
+          <button
+            mat-button
+            color="light"
+            class="add-ex"
+            (click)="addExNumber(i)"
+            [class.mat-elevation-z7]="true"
+          >
+            Agregar Ejercicio ➕
+          </button>
+        </mat-card-actions>
+      </form>
     </mat-card>
-  </form>
-  <div>
-    <button mat-fab
-      (click)="addBlock()"
-      class="float-button "
-      color="primary">
-      <mat-icon>add</mat-icon>
+  </ng-container>
+
+  <div class="float-button ">
+    <button mat-flat-button (click)="addBlock()" color="primary">
+      <mat-icon class="mat-18">add</mat-icon>Agregar Bloque
     </button>
+    <!--  <button mat-flat-button (click)="onSubmit()" color="accent">
+      <mat-icon class="mat-18">save</mat-icon>Salvar Todo
+    </button> -->
   </div>
 </div>

@@ -17,7 +17,8 @@ import {
   MatRadioModule,
   MatCardModule,
   MatDatepickerModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatSnackBarModule
 } from '@angular/material';
 import { AddRoutineComponent } from './components/add-routine/add-routine.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -39,14 +40,12 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     MatRadioModule,
     MatCardModule,
     MatDatepickerModule,
-    MatNativeDateModule ,
+    MatNativeDateModule,
     ReactiveFormsModule,
+    MatSnackBarModule,
     FormsModule
-
   ],
-  providers: [
-    MatDatepickerModule
-  ],
+  providers: [MatDatepickerModule],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

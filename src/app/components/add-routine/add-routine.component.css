@@ -15,10 +15,14 @@
 .row {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .col {
   flex: 1;
+  margin-right: 20px;
+}
+.col1 {
   margin-right: 20px;
 }
 
@@ -28,11 +32,44 @@
 
 .flex-data-ex {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.flex-data-ex * {
+  margin-right: 10%;
 }
 
 .float-button {
   position: fixed;
   bottom: 2px;
   right: 3%;
+}
+.contenet {
+  margin: 3% 23%;
+}
+@media (max-device-width: 900px) {
+  .contenet {
+    margin: 3%;
+  }
+  .mat-card-actions .mat-button,
+  .mat-card-actions .mat-raised-button {
+    margin: 6px 3px;
+  }
+}
+.box-border {
+  -webkit-border-radius: 19px 19px 19px 19px;
+  border-radius: 19px 19px 19px 19px;
+  border: 2px dashed;
+  padding: 2%;
+  margin-top: 3%;
+}
+.add-ex {
+  border-radius: 10px;
+  color: white;
+  border: 2px dashed;
+}
+.flex-remove {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1%;
 }

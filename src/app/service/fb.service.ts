@@ -1,3 +1,4 @@
+import { IRoutine } from 'src/app/models/routine.model';
 import { Injectable } from '@angular/core';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -14,12 +15,11 @@ const firestore = firebase.firestore();
   providedIn: 'root'
 })
 export class FbService {
-  collectionRefRoutines = firestore.collection('routines');
-  collectionRefRoutinesUser = firestore.collection('user');
+  private collectionRefRoutines = firestore.collection('routines');
+  private collectionRefRoutinesUser = firestore.collection('user');
   constructor() {}
-  public saveTicket(ticket: any): Promise<boolean> {
+  public saveDoc(ticket: any): Promise<boolean> {
     return new Promise(resolve => {
-      console.log(ticket);
       this.collectionRefRoutines
         .add(ticket)
         .then(() => {
@@ -43,23 +43,23 @@ export class FbService {
         });
     });
   }
-  public getByIdTicket(id: string): Promise<any> {
+  public getRoutineByIdUser(id: string): Promise<any> {
     return new Promise(async resolve => {
       const doc = await this.collectionRefRoutines.doc(id).get();
       if (doc.exists) {
         const data = doc.data();
         data[id] = id;
-        resolve(<any>data);
+        resolve(data as any);
       } else {
         resolve(null);
       }
     });
   }
-  public editByIdTicket(ticket: any): Promise<boolean> {
+  public editDoc(routine: IRoutine): Promise<boolean> {
     return new Promise(resolve => {
       this.collectionRefRoutines
-        .doc(ticket.id)
-        .update(ticket)
+        .doc(routine.id)
+        .update(routine)
         .then(() => {
           resolve(true);
         })
@@ -79,18 +79,15 @@ export class FbService {
       });
     });
   }
-  public getByNumAndUid(number: number, uid: string): Promise<any[]> {
+  public getByUid(uid: string): Promise<IRoutine[]> {
     return new Promise(resolve => {
-      this.collectionRefRoutines
-        .where('uid', '==', uid)
-        .where('number', '==', number)
-        .onSnapshot(docs => {
-          const data = [];
-          docs.forEach(doc => {
-            data.push(Object.assign(doc.data(), { id: doc.id }));
-          });
-          resolve(data);
+      this.collectionRefRoutines.where('uid', '==', uid).onSnapshot(docs => {
+        const data: IRoutine[] = [];
+        docs.forEach(doc => {
+          data.push(Object.assign(doc.data(), { id: doc.id }));
         });
+        resolve(data);
+      });
     });
   }
   public getAllUser(): Promise<any[]> {

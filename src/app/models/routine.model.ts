@@ -6,4 +6,5 @@ export interface IRoutine {
   startDate?: number;
   number?: number;
   uid?: string;
+  id?: string;
 }
