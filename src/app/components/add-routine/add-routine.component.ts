@@ -60,6 +60,11 @@ export class AddRoutineComponent implements OnInit {
     this.getUser();
   }
 
+  sendNotification() {
+    this.fbService
+      .sendNotification(this.routineModel.uid)
+      .subscribe(data => this.openSnackBar(`Notificacion enviada ✉️`));
+  }
   async getUser() {
     this.users = await this.fbService.getAllUser();
     console.log(this.users);
@@ -158,8 +163,9 @@ export class AddRoutineComponent implements OnInit {
   }
   handleDateEnd(value: any) {
     const time = new Date(value).getTime();
-    console.log(time);
     this.routineModel.endDate = time;
+    const dataToUpdate: any = { endDate: time, id: this.routineModel.id };
+    this.fbService.editDoc(dataToUpdate).then(data => console.log(data));
   }
   //  _helpers
   getNumOfBloqPerDay(day: number): number {

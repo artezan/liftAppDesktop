@@ -3,21 +3,45 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { Observable } from 'rxjs/internal/Observable';
-import { FB_CONFIG } from '../_conf/fb-config';
+import { FB_CONFIG, FB_KEY_SERVER } from '../_conf/fb-config';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 firebase.initializeApp(FB_CONFIG);
 // Inica firestore
 const firestore = firebase.firestore();
-// configuracion de firestore requerida
-// const settings = { timestampsInSnapshots: true };
-// firestore.settings(settings);
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json',
+    Authorization: `key=${FB_KEY_SERVER}`
+  })
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class FbService {
   private collectionRefRoutines = firestore.collection('routines');
   private collectionRefRoutinesUser = firestore.collection('user');
-  constructor() {}
+  private URL_FIREBASE = `https://fcm.googleapis.com/fcm/send`;
+
+  constructor(private http: HttpClient) {}
+  // msg por http api
+  public sendNotification(uid: string): Observable<any> {
+    const DATA = {
+      notification: {
+        title: 'Nueva Rutina 💪',
+        body: 'Se ha subido una nueva rutina'
+      },
+      priority: 'high',
+      data: {
+        click_action: 'FLUTTER_NOTIFICATION_CLICK'
+      },
+
+      to: `/topics/topic-${uid}`
+    };
+    return this.http.post(this.URL_FIREBASE, DATA, httpOptions);
+  }
+  //  firestore
   public saveDoc(ticket: any): Promise<boolean> {
     return new Promise(resolve => {
       this.collectionRefRoutines

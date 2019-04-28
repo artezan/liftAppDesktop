@@ -44,6 +44,7 @@
           placeholder="Fecha Fin"
           [value]="dateToShow"
           readonly
+          [disabled]="!routineModel.uid"
         />
         <mat-datepicker-toggle matSuffix [for]="picker">
           <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
@@ -68,6 +69,16 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <div class="col1 send-button">
+      <button
+        mat-flat-button
+        class="color-green "
+        [disabled]="!routineModel.uid"
+        (click)="sendNotification()"
+      >
+        Enviar Notificacion <mat-icon class="mat-18">send</mat-icon>
+      </button>
+    </div>
   </div>
   <ng-container *ngFor="let block of blocks; let i = index">
     <mat-card *ngIf="block.day == currentDay" class="shipping-card">
@@ -84,7 +95,9 @@
             style="margin-left: auto;"
             (click)="removeBlock(i)"
           >
-            <mat-icon color="warn" class="mat-18">delete</mat-icon>
+            <mat-icon (click)="onSubmit()" color="warn" class="mat-18"
+              >delete</mat-icon
+            >
           </button>
         </mat-card-header>
         <div class="flex-data-ex">
@@ -236,7 +249,7 @@
       <mat-icon class="mat-18">add</mat-icon>Agregar Bloque
     </button>
     <!--  <button mat-flat-button (click)="onSubmit()" color="accent">
-      <mat-icon class="mat-18">save</mat-icon>Salvar Todo
+      <mat-icon class="mat-18">save</mat-icon>Enviar Notificacion
     </button> -->
   </div>
 </div>

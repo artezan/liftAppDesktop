@@ -44,6 +44,10 @@
   bottom: 2px;
   right: 3%;
 }
+.send-button {
+  align-self: center;
+}
+
 .contenet {
   margin: 3% 23%;
 }

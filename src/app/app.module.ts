@@ -22,12 +22,16 @@ import {
 } from '@angular/material';
 import { AddRoutineComponent } from './components/add-routine/add-routine.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, MenuComponent, AddRoutineComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     LayoutModule,
     MatToolbarModule,
@@ -43,7 +47,10 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     MatNativeDateModule,
     ReactiveFormsModule,
     MatSnackBarModule,
-    FormsModule
+    FormsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production
+    })
   ],
   providers: [MatDatepickerModule],
   bootstrap: [AppComponent]
